@@ -4,11 +4,14 @@ import express, {
 	type Request,
 	type Response,
 } from "express";
+import  userRouter  from "./modules/users/user.route";
 
 const app: Application = express();
 
+// route
+app.use("/api/auth",userRouter)
+
 app.get("/", (req: Request, res: Response) => {
-	// res.send("hello world!");
 	res.status(200).json({
 		success: true,
 		message: "hello world!",
