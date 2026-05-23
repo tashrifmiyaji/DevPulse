@@ -20,16 +20,35 @@ const createIssues = async (req: Request, res: Response) => {
 		});
 	}
 };
-const getAllIssues = async () => {
-	
-};
-const getSingleIssues = async (req: Request, res: Response) => {
+const getAllIssues = async () => {};
 
+const getSingleIssues = async (req: Request, res: Response) => {
+	const { id } = req.params;
+	const result = await issuesService.getSingleIssuesFromDb(id as string);
+	try {
+		if (result.rows.length === 0) {
+			res.status(404).json({
+				success: false,
+				message: "issue not found!",
+			});
+		}
+
+		res.status(200).json({
+			success: true,
+			message: "issue retrieve successfully",
+			data: result.rows[0],
+		});
+	} catch (error: any) {
+		res.status(500).json({
+			success: false,
+			message: error.message,
+			error: error,
+		});
+	}
 };
 
 const updateIssues = async () => {};
-const deleteIssues = async () => {
-};
+const deleteIssues = async () => {};
 
 export const issuesController = {
 	createIssues,

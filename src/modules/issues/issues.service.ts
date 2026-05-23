@@ -1,4 +1,3 @@
-
 import { pool } from "../../db";
 import type { IIssues } from "./issues.interface";
 
@@ -14,21 +13,16 @@ const createIssuesIntoDb = async (payload: IIssues, user) => {
 	return result;
 };
 
-const getAllIssuesFromDb = async () => {
-    
-}
+const getAllIssuesFromDb = async () => {};
 
-const getSingleIssuesFromDb = async () => {
+const getSingleIssuesFromDb = async (id: string) => {
+	const result = await pool.query(`SELECT * FROM issue WHERE id=$1`, [id]);
+	return result;
+};
 
-}
+const updateIssuesIntoDb = async () => {};
 
-const updateIssuesIntoDb = async () => {
-
-}
-
-const deleteIssuesFromDb = async () => {
-
-}
+const deleteIssuesFromDb = async () => {};
 
 export const issuesService = {
 	createIssuesIntoDb,
