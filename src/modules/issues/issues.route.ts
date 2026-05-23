@@ -11,8 +11,18 @@ router.post(
 	issuesController.createIssues,
 );
 router.get("/", auth(USER_ROLE.maintainer), issuesController.getAllIssues);
-router.get("/:id", issuesController.getSingleIssues);
+
+router.get(
+	"/:id",
+	auth(USER_ROLE.maintainer, USER_ROLE.contributor),
+	issuesController.getSingleIssues,
+);
 router.patch("/:id", issuesController.updateIssues);
-router.delete("/:id", issuesController.deleteIssues);
+
+router.delete(
+	"/:id",
+	auth(USER_ROLE.maintainer, USER_ROLE.contributor),
+	issuesController.deleteIssues,
+);
 
 export default router;
