@@ -9,6 +9,8 @@ import issuesRouter from "./modules/issues/issues.route";
 
 const app: Application = express();
 
+app.use(express.json());
+
 app.get("/", (req: Request, res: Response) => {
 	res.status(200).json({
 		success: true,
@@ -18,6 +20,6 @@ app.get("/", (req: Request, res: Response) => {
 
 // route
 app.use("/api/auth", userRouter);
-app.use("/api/auth", issuesRouter);
+app.use("/api/issues", issuesRouter);
 
 export default app;

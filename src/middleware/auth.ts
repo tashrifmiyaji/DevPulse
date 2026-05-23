@@ -7,42 +7,47 @@ import type { ROLES } from "../types/index";
 const auth = (...roles: ROLES[]) => {
 	return async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			const token = req.headers.authorization;
+			let token = req.headers.authorization;
 
 			if (!token) {
-				res.status(401).json({
+				return res.status(401).json({
 					success: false,
-					message: "Unauthorized access!!",
+					message: "Unauthorized access",
 				});
 			}
 
-			const decoded = jwt.verify(
-				token as string,
-				dotEnv.accessTokenSecret as string,
-			) as JwtPayload;
+			if (token.startsWith("Bearer ")) {
+				token = token.split(" ")[1];
+			}
 
-			const userData = await pool.query(
-				`SELECT * FROM users WHERE email=$1`,
-				[decoded.email],
-			);
+			const decoded = jwt.verify(token as string, dotEnv.accessTokenSecret as string) as JwtPayload;
 
+			const userId = decoded.id;
+			const userData = await pool.query(`SELECT id, name, email, role FROM users WHERE id=$1`, [userId]);
 			const user = userData.rows[0];
 
 			if (!user) {
-				res.status(404).json({
+				return res.status(404).json({
 					success: false,
-					message: "User not found!",
+					message: "User not found",
 				});
 			}
 
 			if (roles.length && !roles.includes(user.role)) {
-				res.status(403).json({
+				return res.status(403).json({
 					success: false,
-					message: "Forbidden!!,This role have no access!",
+					message: "Forbidden: role has no access",
 				});
 			}
-			req.user = decoded; 
-			next();
+
+			req.user = {
+				id: user.id,
+				name: user.name,
+				email: user.email,
+				role: user.role,
+			} as JwtPayload;
+
+			return next();
 		} catch (error) {
 			next(error);
 		}

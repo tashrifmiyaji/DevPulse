@@ -1,28 +1,17 @@
 import type { Request, Response } from "express";
 import { userService } from "./user.service";
 import sendResponse from "../../utility/sendResponse";
-import { getAccessToken, getRefreshToken } from "../../utility/token";
+import { getAccessToken } from "../../utility/token";
 
 const createUser = async (req: Request, res: Response) => {
 	try {
-		const result = await userService.createUserIntoDB(req.body);
-		delete result.rows[0].password;
-
-		const refreshToken = getRefreshToken(result);
-		res.cookie("refreshToken", refreshToken, {
-			secure: false, //todo in production => true
-			httpOnly: true,
-			sameSite: "lax",
-		});
-
-		const accessToken = getAccessToken(result);
-		res.header("Authorization", accessToken);
+		const user = await userService.createUserIntoDB(req.body);
 
 		sendResponse(res, {
 			statusCode: 201,
 			success: true,
-			message: "user created successfully.",
-			data: result.rows[0],
+			message: "User registered successfully",
+			data: user,
 		});
 	} catch (error: any) {
 		sendResponse(res, {
@@ -36,25 +25,19 @@ const createUser = async (req: Request, res: Response) => {
 
 const loginUser = async (req: Request, res: Response) => {
 	try {
-		const result = await userService.loginUserIntoDB(req.body);
+		const user = await userService.loginUserIntoDB(req.body);
 
-		const refreshToken = getRefreshToken(result);
-		res.cookie("refreshToken", refreshToken, {
-			secure: false, //todo in production => true
-			httpOnly: true,
-			sameSite: "lax",
-		});
-
-		const accessToken = getAccessToken(result);
-		res.header("Authorization", accessToken);
+		const token = getAccessToken(user as any);
 
 		sendResponse(res, {
-			statusCode: 201,
+			statusCode: 200,
 			success: true,
-			message: "User retrieved successfully.",
-			data: result.rows[0],
+			message: "Login successful",
+			data: {
+				token,
+				user,
+			},
 		});
-	
 	} catch (error: any) {
 		sendResponse(res, {
 			statusCode: 500,

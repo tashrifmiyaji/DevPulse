@@ -1,25 +1,14 @@
 import jwt from "jsonwebtoken";
 import dotEnv from "../config/dotEnv";
 
-export const getAccessToken = (user) => {
-	const jwtPayload = {
-		id: user.id,
-		name: user.name,
-		email: user.email,
-		role: user.role,
-	};
-
-	const accessToken = jwt.sign(
-		jwtPayload,
-		dotEnv.accessTokenSecret as string,
-		{
-			expiresIn: "1d",
-		},
-	);
-	return { accessToken };
+type UserPayload = {
+	id: number;
+	name: string;
+	email: string;
+	role: string;
 };
 
-export const getRefreshToken = (user) => {
+export const getAccessToken = (user: UserPayload): string => {
 	const jwtPayload = {
 		id: user.id,
 		name: user.name,
@@ -27,12 +16,22 @@ export const getRefreshToken = (user) => {
 		role: user.role,
 	};
 
-	const refreshToken = jwt.sign(
-		jwtPayload,
-		dotEnv.accessTokenSecret as string,
-		{
-			expiresIn: "7d",
-		},
-	);
-	return { refreshToken };
+	const accessToken = jwt.sign(jwtPayload, dotEnv.accessTokenSecret as string, {
+		expiresIn: "1d",
+	});
+	return accessToken;
+};
+
+export const getRefreshToken = (user: UserPayload): string => {
+	const jwtPayload = {
+		id: user.id,
+		name: user.name,
+		email: user.email,
+		role: user.role,
+	};
+
+	const refreshToken = jwt.sign(jwtPayload, dotEnv.refreshTokenSecret as string, {
+		expiresIn: "7d",
+	});
+	return refreshToken;
 };
