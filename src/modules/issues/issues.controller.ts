@@ -20,7 +20,24 @@ const createIssues = async (req: Request, res: Response) => {
 		});
 	}
 };
-const getAllIssues = async () => {};
+const getAllIssues = async (req: Request, res: Response) => {
+	const result = await issuesService.getAllIssuesFromDb(req);
+	try {
+		sendResponse(res, {
+			statusCode: 200,
+			success: true,
+			message: "issues retrieve successfully",
+			data: result,
+		});
+	} catch (error: any) {
+		sendResponse(res, {
+			statusCode: 500,
+			success: false,
+			message: error.message,
+			data: error,
+		});
+	}
+};
 
 const getSingleIssues = async (req: Request, res: Response) => {
 	const { id } = req.params;

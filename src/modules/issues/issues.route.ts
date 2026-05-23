@@ -10,7 +10,7 @@ router.post(
 	auth(USER_ROLE.maintainer, USER_ROLE.contributor),
 	issuesController.createIssues,
 );
-router.get("/", issuesController.getAllIssues);
+router.get("/", auth(USER_ROLE.maintainer), issuesController.getAllIssues);
 router.get("/:id", issuesController.getSingleIssues);
 router.patch("/:id", issuesController.updateIssues);
 router.delete("/:id", issuesController.deleteIssues);
