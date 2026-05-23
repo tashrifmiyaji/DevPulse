@@ -1,23 +1,39 @@
-const createIssuesIntoDb = async () => {
+
+import { pool } from "../../db";
+import type { IIssues } from "./issues.interface";
+
+const createIssuesIntoDb = async (payload: IIssues, user) => {
+	const { title, description, type } = payload;
+
+	const result = await pool.query(
+		`
+            INSERT INTO issues(reporter_id, title,description,type,status) VALUES($1,$2,$3,$4,$5) RETURNING *
+        `,
+		[user.id, title, description, type, "open"],
+	);
+	return result;
+};
+
+const getAllIssuesFromDb = async () => {
     
 }
-const getAllIssuesFromDb = async () => {
 
-}
 const getSingleIssuesFromDb = async () => {
 
 }
+
 const updateIssuesIntoDb = async () => {
 
 }
+
 const deleteIssuesFromDb = async () => {
 
 }
 
 export const issuesService = {
-    createIssuesIntoDb,
-    getAllIssuesFromDb,
-    getSingleIssuesFromDb,
-    updateIssuesIntoDb,
-    deleteIssuesFromDb
-}
+	createIssuesIntoDb,
+	getAllIssuesFromDb,
+	getSingleIssuesFromDb,
+	updateIssuesIntoDb,
+	deleteIssuesFromDb,
+};
