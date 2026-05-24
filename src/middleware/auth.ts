@@ -49,6 +49,19 @@ const auth = (...roles: ROLES[]) => {
 
 			return next();
 		} catch (error) {
+			if (
+				error instanceof jwt.TokenExpiredError ||
+				error instanceof jwt.JsonWebTokenError
+			) {
+				return next({
+					status: 401,
+					message:
+						error instanceof jwt.TokenExpiredError
+							? "Token expired"
+							: "Invalid token"
+				});
+			}
+
 			next(error);
 		}
 	};
